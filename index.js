@@ -20,7 +20,25 @@ conn.connect((err) =>{
   console.log('Mysql Connected...');
 });
  
-
+//show all users
+app.get('/api/users',(req, res) => {
+    let sql = "SELECT * FROM users";
+    let query = conn.query(sql, (err, results) => {
+      if(err) throw err;
+      res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+    });
+  });
+   
+  //show single user
+  app.get('/api/users/:id',(req, res) => {
+    let sql = "SELECT * FROM users WHERE user_id="+req.params.id;
+    let query = conn.query(sql, (err, results) => {
+      if(err) throw err;
+      res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+    });
+  });
+   
+  
  
 
  

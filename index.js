@@ -38,8 +38,38 @@ app.get('/api/users',(req, res) => {
     });
   });
    
-  
- 
+  //add new user
+  app.post('/api/users',(req, res) => {
+      console.log(req.body);
+    let data = {
+        name: req.body.name,
+        surname: req.body.surname, 
+        username: req.body.username, 
+        password: req.body.password, 
+        email: req.body.email, 
+        phoneNumber: req.body.phoneNumber, 
+        rut: req.body.rut, 
+        sex: req.body.sex, 
+        city: req.body.city, 
+        region: req.body.region, 
+        address: req.body.address,  
+        birth: req.body.birth
+    };
+    let sql = "INSERT INTO users SET ?";
+    let query = conn.query(sql, data,(err, results) => {
+      if(err) throw err;
+      res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+    });
+  });
+   
+  //update user by ID
+  app.put('/api/users/:id',(req, res) => {
+    let sql = "UPDATE users SET product_name='"+req.body.product_name+"', product_price='"+req.body.product_price+"' WHERE product_id="+req.params.id;
+    let query = conn.query(sql, (err, results) => {
+      if(err) throw err;
+      res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+    });
+  });
 
  
 //Server listening

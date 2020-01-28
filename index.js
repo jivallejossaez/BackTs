@@ -71,6 +71,35 @@ app.get('/api/users',(req, res) => {
     });
   });
 
+  //show all car by userId
+
+  app.get('/api/cars/:id',(req, res) => {
+    let sql = "SELECT * FROM cars WHERE idUserOwner="+req.params.id;
+    let query = conn.query(sql, (err, results) => {
+      if(err) throw err;
+      res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+    });
+  });
+
+  //get a car by id
+
+  app.get('/api/car/:id',(req, res) => {
+    let sql = "SELECT * FROM cars WHERE car_id="+req.params.id;
+    let query = conn.query(sql, (err, results) => {
+      if(err) throw err;
+      res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+    });
+  });
+
+  //add a new car
+
+  //set user as a driver
+
+  //add a ride to share
+
+  //book a ride
+
+
  
 //Server listening
 app.listen(3000,() =>{

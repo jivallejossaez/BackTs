@@ -2,9 +2,23 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
 const mysql = require('mysql');
+const jwt = require('jsonwebtoken');
+const expressJwt = require('express-jwt');
+const cors = require('cors');
  
 // parse application/json
+app.use(cors());
+
+app.use(function(req, res, next) {
+   res.header("Access-Control-Allow-Origin", "*");
+   res.header('Access-Control-Allow-Methods', 'DELETE, PUT, GET, POST');
+   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+   next();
+});
+
 app.use(bodyParser.json());
+//app.use(expressJwt({secret: 'tellevo-app-super-shared-secret'}).unless({path: ['/api/auth']}));
+
  
 //create database connection
 const conn = mysql.createConnection({
@@ -18,6 +32,28 @@ const conn = mysql.createConnection({
 conn.connect((err) =>{
   if(err) throw err;
   console.log('Mysql Connected...');
+});
+
+app.post('/api/auth', function(req, res) {
+    const data = req.body;
+    console.log("peticion realizada");
+    let query = conn.query("SELECT * FROM users where username="+req.body.username, (err, results) => {
+      if(err) throw err;
+      console.log(results);
+      return(JSON.stringify(results));
+  });
+
+    if(query.password == data.password){
+        var token = jwt.sign({userID: user.id}, 'tellevo-app-super-shared-secret', {expiresIn: '1h'});
+        res.send({token});
+        console.log("usuario encontrado");
+    }
+    else{
+        res.sendStatus(401);
+        console.log("password invalid");
+    }
+    
+    
 });
  
 //show all users
@@ -114,6 +150,14 @@ app.get('/api/users',(req, res) => {
 });
 
   //set user as a driver
+
+  app.put('/api/users/:id',(req, res) => {
+    let sql = "UPDATE users SET isDriver=''Y'' WHERE user_id="+req.params.id;
+    let query = conn.query(sql, (err, results) => {
+      if(err) throw err;
+      res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
+    });
+  });
 
   //add a ride to share
 
